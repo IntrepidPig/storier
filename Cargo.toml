@@ -1,0 +1,13 @@
+[package]
+name = "storier"
+version = "0.1.0"
+authors = ["Benny A <virusdownloader7@gmail.com>"]
+
+[dependencies]
+rocket = "0.3.0"
+rocket_codegen = "0.3.0"
+chrono = { version = "0.4", features = ["serde"] }
+serde = "*"
+serde_derive = "*"
+serde_json = "*"
+handlebars = "0.28.3"
