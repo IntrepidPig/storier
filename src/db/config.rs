@@ -7,6 +7,7 @@ use toml;
 
 #[derive(Deserialize)]
 pub struct Config {
+    pub port: u16,
     pub postgres: String,
     pub password: String,
     pub root: PathBuf,

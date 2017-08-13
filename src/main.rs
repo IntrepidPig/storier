@@ -19,8 +19,11 @@ pub mod db;
 fn main() {
 	let config = db::config::Config::load().unwrap();
 	let db = db::DB::new(config.postgres.clone());
+	let rocket_config = rocket::config::Config::build(rocket::config::Environment::Staging)
+		.port(config.port)
+		.unwrap();
 
-	rocket::ignite()
+	rocket::custom(rocket_config, true)
 		.mount("/", routes![blog::index, blog::index_page, blog::post, blog::css, blog::scripts, blog::auth::auth, blog::submit_page, blog::submit_post])
 		.manage(db)
 		.manage(config)
