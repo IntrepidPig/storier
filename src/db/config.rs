@@ -1,6 +1,6 @@
 use std::io::prelude::*;
 use std::fs::File;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use xdg;
 use toml;
@@ -9,6 +9,7 @@ use toml;
 pub struct Config {
     pub postgres: String,
     pub password: String,
+    pub root: PathBuf,
 }
 
 impl Config {

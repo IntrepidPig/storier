@@ -9,20 +9,21 @@ use rocket::request::Form;
 use rocket::response::Redirect;
 
 #[get("/")]
-fn index(db: State<DB>) -> Result<Response<'static>, Status> {
-	index_page(0, 10, db)
+fn index(db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status> {
+	index_page(0, 10, db, conf)
 }
 
 #[get("/posts/<from>/<amount>")]
-fn index_page(from: u32, amount: u32, db: State<DB>) -> Result<Response<'static>, Status> {
+fn index_page(from: u32, amount: u32, db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status> {
 	let mut input = String::new();
-	File::open(Path::new("/srv/blog/index.html")).unwrap().read_to_string(&mut input).unwrap();
+	println!("Loading path {}", conf.root.join(Path::new("index.html")).to_string_lossy());
+	File::open(conf.root.join(Path::new("index.html"))).unwrap().read_to_string(&mut input).unwrap();
 
 	let mut navbar = String::new();
-	File::open(Path::new("/srv/blog/templates/navbar.htmp")).unwrap().read_to_string(&mut navbar).unwrap();
+	File::open(conf.root.join(Path::new("templates/navbar.htmp"))).unwrap().read_to_string(&mut navbar).unwrap();
 
 	let posts: Vec<Post> = db.get_posts(from, amount);
-	let posts: Vec<String> = posts.iter().map(|x| { x.render() }).collect();
+	let posts: Vec<String> = posts.iter().map(|x| { x.render(&conf) }).collect();
 	let mut posts_render = String::new();
 
 	for post in &posts {
@@ -47,15 +48,15 @@ fn index_page(from: u32, amount: u32, db: State<DB>) -> Result<Response<'static>
 }
 
 #[get("/post/<title>")]
-fn post(title: String, db: State<DB>) -> Result<Response<'static>, Status> {
+fn post(title: String, db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status> {
 	if let Some(post) = db.get_post_by_title(title) {
 		println!("Found post");
 		let mut input = String::new();
-		File::open(Path::new("/srv/blog/templates/single_post.htmp")).unwrap().read_to_string(&mut input).unwrap();
+		File::open(conf.root.join(Path::new("templates/single_post.htmp"))).unwrap().read_to_string(&mut input).unwrap();
 
 		let mut navbar = String::new();
-		File::open(Path::new("/srv/blog/templates/navbar.htmp")).unwrap().read_to_string(&mut navbar).unwrap();
-		let post_render = post.render();
+		File::open(conf.root.join(Path::new("templates/navbar.htmp"))).unwrap().read_to_string(&mut navbar).unwrap();
+		let post_render = post.render(&conf);
 
 		let reg = Handlebars::new();
 
@@ -77,12 +78,12 @@ fn post(title: String, db: State<DB>) -> Result<Response<'static>, Status> {
 }
 
 #[get("/submit")]
-fn submit_page() -> Result<Response<'static>, Status> {
+fn submit_page(conf: State<Config>) -> Result<Response<'static>, Status> {
 	let mut input = String::new();
-	File::open(Path::new("/srv/blog/submit.html")).unwrap().read_to_string(&mut input).unwrap();
+	File::open(conf.root.join(Path::new("submit.html"))).unwrap().read_to_string(&mut input).unwrap();
 
 	let mut navbar = String::new();
-	File::open(Path::new("/srv/blog/templates/navbar.htmp")).unwrap().read_to_string(&mut navbar).unwrap();
+	File::open(conf.root.join(Path::new("templates/navbar.htmp"))).unwrap().read_to_string(&mut navbar).unwrap();
 
 	let reg = Handlebars::new();
 
@@ -107,18 +108,18 @@ fn submit_post(submission: Form<Submission>, db: State<DB>, config: State<Config
 		let post = submission.get().to_post();
 		db.add_post(post);
 
-		Ok(Redirect::to("/srv/blog/index.html"))
+		Ok(Redirect::to(config.root.join(Path::new("index.html")).to_str().unwrap()))
 	}
 }
 
 #[get("/styles/<file..>")]
-fn css(file: PathBuf) -> Option<NamedFile> {
-	NamedFile::open(Path::new("/srv/blog/styles/").join(file)).ok()
+fn css(file: PathBuf, config: State<Config>) -> Option<NamedFile> {
+	NamedFile::open(config.root.join(Path::new("styles/")).join(file)).ok()
 }
 
 #[get("/scripts/<file..>")]
-fn scripts(file: PathBuf) -> Option<NamedFile> {
-	NamedFile::open(Path::new("/srv/blog/scripts/").join(file)).ok()
+fn scripts(file: PathBuf, conf: State<Config>) -> Option<NamedFile> {
+	NamedFile::open(conf.root.join(Path::new("scripts/")).join(file)).ok()
 }
 
 use serde_json;
@@ -184,10 +185,10 @@ impl Post {
 		})
 	}
 
-	pub fn render(&self) -> String {
+	pub fn render(&self, conf: &Config) -> String {
 		let reg = Handlebars::new();
 		let mut post_template = String::new();
-		File::open(Path::new("/srv/blog/templates/post.htmp")).unwrap().read_to_string(&mut post_template).unwrap();
+		File::open(conf.root.join(Path::new("templates/post.htmp"))).unwrap().read_to_string(&mut post_template).unwrap();
 
 		let post_render = reg.template_render(&post_template, &self.get_context()).expect("Failed to render post");
 
