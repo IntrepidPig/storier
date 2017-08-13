@@ -11,3 +11,6 @@ serde = "*"
 serde_derive = "*"
 serde_json = "*"
 handlebars = "0.28.3"
+postgres = { version = "0.15", features = ["with-chrono"] }
+toml = "0.4.4"
+xdg = "2.1.0"
