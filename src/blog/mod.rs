@@ -16,7 +16,6 @@ fn index(db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status
 #[get("/posts/<from>/<amount>")]
 fn index_page(from: u32, amount: u32, db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status> {
 	let mut input = String::new();
-	println!("Loading path {}", conf.root.join(Path::new("index.html")).to_string_lossy());
 	File::open(conf.root.join(Path::new("index.html"))).unwrap().read_to_string(&mut input).unwrap();
 
 	let mut navbar = String::new();
@@ -50,7 +49,6 @@ fn index_page(from: u32, amount: u32, db: State<DB>, conf: State<Config>) -> Res
 #[get("/post/<title>")]
 fn post(title: String, db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status> {
 	if let Some(post) = db.get_post_by_title(title) {
-		println!("Found post");
 		let mut input = String::new();
 		File::open(conf.root.join(Path::new("templates/single_post.htmp"))).unwrap().read_to_string(&mut input).unwrap();
 
@@ -72,7 +70,6 @@ fn post(title: String, db: State<DB>, conf: State<Config>) -> Result<Response<'s
 			.sized_body(Cursor::new(output))
 			.ok()
 	} else {
-		println!("Couldn't find post");
 		Err(Status::NotFound)
 	}
 }
@@ -102,7 +99,6 @@ fn submit_page(conf: State<Config>) -> Result<Response<'static>, Status> {
 #[post("/submit", data = "<submission>")]
 fn submit_post(submission: Form<Submission>, db: State<DB>, config: State<Config>) -> Result<Redirect, Status> {
 	if submission.get().password != config.password {
-		println!("Forbidden, bitch");
 		Err(Status::Forbidden)
 	} else {
 		let post = submission.get().to_post();
