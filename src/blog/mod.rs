@@ -7,6 +7,8 @@ use rocket::response::NamedFile;
 use std::path::PathBuf;
 use rocket::request::Form;
 use rocket::response::Redirect;
+use crypto::sha2::Sha256;
+use crypto::digest::Digest;
 
 #[get("/")]
 fn index(db: State<DB>, conf: State<Config>) -> Result<Response<'static>, Status> {
@@ -98,7 +100,13 @@ fn submit_page(conf: State<Config>) -> Result<Response<'static>, Status> {
 
 #[post("/submit", data = "<submission>")]
 fn submit_post(submission: Form<Submission>, db: State<DB>, config: State<Config>) -> Result<Redirect, Status> {
-	if submission.get().password != config.password {
+	fn hash(pass: &String) -> String {
+		let mut sha = Sha256::new();
+		sha.input_str(&pass);
+		sha.result_str()
+	}
+
+	if hash(&submission.get().password) != config.passhash {
 		Err(Status::Forbidden)
 	} else {
 		let post = submission.get().to_post();

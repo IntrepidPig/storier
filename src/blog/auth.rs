@@ -11,7 +11,7 @@ fn auth_page() {
 #[allow(unmounted_route)]
 #[post("/auth", data = "<password>")]
 fn auth(password: String, config: State<Config>, mut cookies: Cookies) -> &'static str {
-    if password == config.password {
+    if password == config.passhash {
         cookies.add_private(Cookie::new("password", password));
         println!("Got correct password, saved as cookie");
         "Authorized successfully"

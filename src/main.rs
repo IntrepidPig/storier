@@ -12,6 +12,7 @@ extern crate handlebars;
 extern crate postgres;
 extern crate toml;
 extern crate xdg;
+extern crate crypto;
 
 pub mod blog;
 pub mod db;

@@ -5,11 +5,11 @@ use std::path::{Path, PathBuf};
 use xdg;
 use toml;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct Config {
     pub port: u16,
     pub postgres: String,
-    pub password: String,
+    pub passhash: String,
     pub root: PathBuf,
 }
 
