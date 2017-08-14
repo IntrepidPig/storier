@@ -1,0 +1,7 @@
+<div class="post">
+    <div class="header">
+        <h4 class="nine columns title">{{{title}}}</h4>
+        <h6 class="three columns u-text-right date">{{{day}}}<br>{{{time}}}</h6>
+    </div>
+    <p class="u-full-width body">{{{text}}}</p>
+</div>

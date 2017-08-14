@@ -1,0 +1,42 @@
+.index {
+	list-style: none;
+}
+
+.post-listing {
+
+}
+
+.post {
+	margin-top: 50px;
+}
+
+.title {
+	padding-bottom: 5px;
+        border-bottom: solid #ccc;
+        border-width: 1px;
+}
+
+.date {
+	color: #aaa;
+	text-align: right;
+	font-size: 75%;
+}
+
+.body {
+	margin: 0px;
+}
+
+.header {
+	display: flex;
+}
+
+#post-submit {
+	margin-top: 30px;
+	float: right;
+}
+
+.post-preview {
+	padding: 30px;
+	border-radius: 15px;
+	border: solid #ccc;
+}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>The Pigasus Blog</title>
+	<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+	<!--nice font :D-->
+	<link rel="stylesheet" href="/styles/normalize.css">
+	<link rel="stylesheet" href="/styles/skeleton.css">
+	<link rel="stylesheet" href="/styles/styles.css">
+	<link rel="stylesheet" href="/styles/blog.css">
+	<script src="/scripts/moment.js"></script>
+	<script src="/scripts/jquery.js"></script>
+	<script src="/scripts/preview.js"></script>
+</head>
+
+<body>
+	{{{navbar}}}
+	<div id="main-content" class="container">
+		<form method="POST">
+			<div class="row">
+				<label>Title</label>
+				<input id="post-title" name="title" class="u-full-width" placeholder="Quality title here" onchange="renderPreview">
+			</div>
+			<div class="row">
+				<label>Content</label>
+				<textarea id="post-content" name="body" class="u-full-width" placeholder="Quality content here"></textarea>
+			</div>
+			<div class="row">
+				<div class="six columns">
+					<label>Password</label>
+					<input name="password" class="u-full-width" type="password">
+				</div>
+				<div class="six columns">
+					<label></label>
+					<input id="post-submit" class="button-primary" value="Submit" type="submit">
+				</div>
+			</div>
+		</form>
+		<div class="post-preview">
+			<div class="post">
+				<div class="header">
+					<h4 id="title-preview" class="nine columns title"></h4>
+					<h6 id="date-preview" class="three columns u-text-right date"><br></h6>
+				</div>
+				<p id="body-preview" class="u-full-width body"></p>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>
